@@ -10,6 +10,11 @@ class MoodRepository {
 
   Future<Map<String, dynamic>> status() async {
     final cid = await _coupleId();
+    if (cid == null) return {
+      'morningMe': false, 'eveningMe': false,
+      'morningPartner': false, 'eveningPartner': false,
+      'myMood': null, 'myNote': null, 'partnerMood': null,
+    };
     final me = supabase.auth.currentUser!.id;
     final today = _today();
 
@@ -67,6 +72,7 @@ class MoodRepository {
   Future<void> greet(String kind) async {
     final uid = supabase.auth.currentUser!.id;
     final cid = await _coupleId();
+    if (cid == null) return;
     await supabase.from('greetings').upsert(
       {
         'couple_id': cid,
@@ -81,6 +87,7 @@ class MoodRepository {
   Future<void> saveMood(String mood, String note) async {
     final uid = supabase.auth.currentUser!.id;
     final cid = await _coupleId();
+    if (cid == null) return;
     await supabase.from('moods').upsert(
       {
         'couple_id': cid,

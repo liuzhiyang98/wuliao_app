@@ -19,6 +19,7 @@ class DailyRepository {
   /// 返回 {question, mine, partner, both}
   Future<Map<String, dynamic>> status() async {
     final cid = await _coupleId();
+    if (cid == null) return {'question': todayQuestion(), 'mine': null, 'partner': null, 'both': false};
     final q = todayQuestion();
     final rows = await supabase
         .from('daily_answers')
@@ -46,6 +47,7 @@ class DailyRepository {
   Future<void> answer(String text) async {
     final uid = supabase.auth.currentUser!.id;
     final cid = await _coupleId();
+    if (cid == null) return;
     await supabase.from('daily_answers').upsert(
       {
         'couple_id': cid,

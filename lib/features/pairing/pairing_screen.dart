@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
+import 'dart:math';
 import '../../core/supabase.dart';
 import '../location/background_credentials.dart';
 
@@ -17,20 +17,25 @@ class _PairingScreenState extends State<PairingScreen> {
   String? _myCode;
   bool _loading = false;
 
+  /// 生成 6 位大写字母配对码
+  String _generateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 去掉易混淆字符
+    final rng = Random();
+    return List.generate(6, (_) => chars[rng.nextInt(chars.length)]).join();
+  }
+
   Future<void> _create() async {
     setState(() => _loading = true);
     try {
       final uid = supabase.auth.currentUser!.id;
-      final code = const Uuid().v4().substring(0, 6).toUpperCase();
-      final cid = await supabase
-          .from('couples')
-          .insert({'code': code, 'member_a': uid})
-          .select('id')
-          .single();
-      await supabase
-          .from('profiles')
-          .update({'couple_id': cid['id']})
-          .eq('id', uid);
+      final code = _generateCode();
+
+      // 创建情侣空间（只有 user_a，等待对方加入）
+      await supabase.from('couples').insert({
+        'user_a': uid,
+        'status': 'active',
+        'invite_code': code,
+      });
       await refreshBgCredentials();
       setState(() => _myCode = code);
     } catch (e) {
@@ -44,16 +49,21 @@ class _PairingScreenState extends State<PairingScreen> {
     setState(() => _loading = true);
     try {
       final uid = supabase.auth.currentUser!.id;
+      final code = _code.text.trim().toUpperCase();
+
+      // 查找匹配的情侣空间并加入（设置 user_b）
       final res = await supabase
           .from('couples')
-          .update({'member_b': uid})
-          .eq('code', _code.text.trim().toUpperCase())
+          .update({'user_b': uid})
+          .eq('invite_code', code)
+          .is('user_b', null) // 确保还没人加入
           .select('id')
-          .single();
-      await supabase
-          .from('profiles')
-          .update({'couple_id': res['id']})
-          .eq('id', uid);
+          .maybeSingle();
+
+      if (res == null) {
+        _err('绑定码无效或已被使用');
+        return;
+      }
       await refreshBgCredentials();
       if (mounted) context.go('/');
     } catch (e) {

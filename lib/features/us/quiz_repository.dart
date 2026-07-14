@@ -17,6 +17,7 @@ class QuizRepository {
 
   Future<Map<String, dynamic>> status() async {
     final cid = await _coupleId();
+    if (cid == null) return {'q': todayQuestion(), 'myChoice': null, 'partnerChoice': null, 'both': false, 'match': false};
     final q = todayQuestion();
     final rows = await supabase
         .from('quiz_rounds')
@@ -45,6 +46,7 @@ class QuizRepository {
   Future<void> choose(String choice) async {
     final uid = supabase.auth.currentUser!.id;
     final cid = await _coupleId();
+    if (cid == null) return;
     final q = todayQuestion();
     await supabase.from('quiz_rounds').upsert(
       {

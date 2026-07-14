@@ -1,0 +1,51 @@
+# Codemagic 云端 iOS 构建配置 —— 自动产出 吾俩 App 的 .ipa
+# 用法：把本仓库导入 Codemagic（GitHub 登录），在项目 Environment variables 填好下列变量（建议 Encrypted），
+# 触发 ios-release workflow 即可在 Artifacts 下载 .ipa，或自动发到 TestFlight。
+workflows:
+  ios-release:
+    name: 吾俩 iOS IPA
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        BUNDLE_ID: "com.example.wuliao"          # 改成你在 Apple Developer 注册的 Bundle ID
+        SUPABASE_URL: Encrypted::                      # 在 Codemagic UI 填真实值
+        SUPABASE_ANON_KEY: Encrypted::
+        APP_STORE_CONNECT_ISSUER_ID: Encrypted::
+        APP_STORE_CONNECT_KEY_IDENTIFIER: Encrypted::
+        APP_STORE_CONNECT_PRIVATE_KEY: Encrypted::     # .p8 内容
+        CERTIFICATE_PRIVATE_KEY: Encrypted::          # 分发证书私钥
+        APP_STORE_CONN_DIST_CERT: Encrypted::         # Distribution p12 (base64)
+        APP_STORE_CONN_PROFILE: Encrypted::           # Provisioning Profile (base64)
+      publishing:
+        app_store_connect:
+          api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+          key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+          issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+          submit_to_testflight: true
+    scripts:
+      - name: 注入 Supabase key
+        script: |
+          sed -i '' "s|YOUR_SUPABASE_URL|$SUPABASE_URL|g" lib/core/supabase.dart
+          sed -i '' "s|YOUR_SUPABASE_ANON_KEY|$SUPABASE_ANON_KEY|g" lib/core/supabase.dart
+      - name: 取依赖 & 生成 iOS 工程
+        script: |
+          flutter pub get
+          flutter create --org com.example.wuliao .
+      - name: 安装 iOS 依赖
+        script: |
+          cd ios && pod install && cd ..
+      - name: 设置签名并构建 IPA
+        script: |
+          echo "BUNDLE_ID=$BUNDLE_ID"
+          flutter build ipa --release \
+            --export-options-plist=exportOptions.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - user@example.com   # 改成你的邮箱，构建完成会收到下载链接

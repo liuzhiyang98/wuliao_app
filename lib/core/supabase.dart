@@ -18,16 +18,18 @@ Future<void> initSupabase() async {
 SupabaseClient get supabase => Supabase.instance.client;
 
 /// 当前用户所在的情侣空间 id（隐私校验依赖它）。
+/// 从 couples 表查询：当前用户作为 user_a 或 user_b 的活跃配对。
 Future<String?> currentCoupleId() async {
   final uid = supabase.auth.currentUser?.id;
   if (uid == null) return null;
   try {
     final r = await supabase
-        .from('profiles')
-        .select('couple_id')
-        .eq('id', uid)
-        .single();
-    return r['couple_id'] as String?;
+        .from('couples')
+        .select('id')
+        .or('user_a.eq.$uid,user_b.eq.$uid')
+        .eq('status', 'active')
+        .maybeSingle();
+    return r?['id'] as String?;
   } catch (_) {
     return null;
   }

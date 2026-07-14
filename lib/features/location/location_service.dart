@@ -1,6 +1,7 @@
+import 'dart:math';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong2.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/local_db.dart';
 import '../../core/supabase.dart';
@@ -62,7 +63,7 @@ class LocationService {
     final now = DateTime.now();
     if (_lastHistAt != null && now.difference(_lastHistAt!).inSeconds < 30) return;
     if (_lastHistPos != null) {
-      final d = const Distance().as(LengthUnit.Meter, _lastHistPos!, LatLng(lat, lng));
+      final d = _haversineM(_lastHistPos!.latitude, _lastHistPos!.longitude, lat, lng);
       if (d < 15 && _lastHistAt != null && now.difference(_lastHistAt!).inMinutes < 2) return;
     }
     _lastHistPos = LatLng(lat, lng);
@@ -79,6 +80,18 @@ class LocationService {
         'accuracy': acc,
       });
     } catch (_) {}
+  }
+
+  /// 内联 Haversine 距离计算（米），避免 Distance 类 Web 兼容问题
+  static double _haversineM(double lat1, double lng1, double lat2, double lng2) {
+    const R = 6371000; // 地球半径 m
+    final dLat = (lat2 - lat1) * pi / 180;
+    final dLng = (lng2 - lng1) * pi / 180;
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1 * pi / 180) * cos(lat2 * pi / 180) *
+            sin(dLng / 2) * sin(dLng / 2);
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return R * c;
   }
 
   void stop() => _sub?.cancel();

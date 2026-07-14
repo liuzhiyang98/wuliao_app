@@ -1,0 +1,85 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+*.iml
+*.tmp
+*.tmp.*
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+
+# Android related
+**/android/**/gradle-wrapper.jar
+.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/android/key.properties
+*.jks
+
+# iOS/XCode related
+**/ios/**/*.mode1v3
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/**/GeneratedPluginRegistrant.*
+**/ios/**/*.generated.dart
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/xcshareddata/xcschemes/*
+**/ios/Runner.xcodeproj/xcshareddata/xcschemes/*
+**/ios/Runner.xcodeproj/project.xcworkspace
+**/ios/Runner.xcworkspace/xcuserdata
+**/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata
+**/ios/Runner.xcodeproj/xcuserdata
+**/ios/.symlinks
+**/ios/Flutter/.last_build_id
+**/ios/Runner/Flutter/Generated.xcconfig
+**/ios/Runner/Flutter/flutter_export_environment.sh
+
+# Coverage
+coverage/
+
+# Exceptions to above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!**/ios/Runner.xcodeproj/*
+!**/ios/Runner.xcworkspace/*
+!**/ios/Runner/Flutter/*
+!**/ios/Pods/**
+!**/ios/Runner/Runner-Bridging-Header.h
+!**/android/gradle-wrapper.properties

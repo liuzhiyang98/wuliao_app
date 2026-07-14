@@ -59,11 +59,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     setState(() => _loading = true);
     try {
-      await supabase.auth.signInWithOtp(
-        email: email,
-        // 关键：PWA 必须指定 redirectTo，否则邮件链接跳转后 App 无法接收认证状态
-        emailRedirectTo: 'https://liuzhiyang98.github.io/wuliao_app/',
-      );
+      await supabase.auth.signInWithOtp(email: email);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('登录链接已发到邮箱，打开即可进入 💌')),

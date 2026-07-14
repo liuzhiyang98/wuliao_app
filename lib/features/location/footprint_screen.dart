@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong2.dart';
+import 'package:latlong2/latlong.dart';
 import 'footprint_repository.dart';
 
 /// 爱情足迹地图：把两人历史位置绘制成轨迹折线，

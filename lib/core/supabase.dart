@@ -7,8 +7,8 @@ const String supabaseUrl = 'https://jvpqa'
 const String supabaseAnonKey = 'eyJhbGciOiJIUzI1'
     'NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO'
     'iJzdXBhYmFzZSIsInJlZiI6Imp2cH'
-    'FhbHFxbXN1ZWF4bnZ5bGFyIiwicm9sZS'
-    'I6ImFub24iLCJpYXQiOjE3ODQwMzYzODAs'
+    'FhbHFxbXN1ZWF4bnZ5bGFyIiwicm9sZSI'
+    ':ImFub24iLCJpYXQiOjE3ODQwMzYzODAs'
     'ImV4cCI6MjA5OTYxMjM4MH0.V7_kUmleHX'
     '9Hxitx8dW60CrZ_TeQ1gjIO1xJnn-Y8t4';
 
@@ -23,10 +23,12 @@ Future<void> initSupabase() async {
 SupabaseClient get supabase => Supabase.instance.client;
 
 /// 当前用户所在的情侣空间 id。
-/// 从 couples 表查询：当前用户作为 user_a 或 user_b 的活跃配对。
+/// 数据库 schema: couples(user_a, user_b, status, invite_code)
+/// 查找当前用户作为 user_a 或 user_b 的活跃配对。
 Future<String?> currentCoupleId() async {
   final uid = supabase.auth.currentUser?.id;
   if (uid == null) return null;
+
   try {
     final r = await supabase
         .from('couples')

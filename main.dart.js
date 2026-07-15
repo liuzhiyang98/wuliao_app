@@ -25072,7 +25072,7 @@ r=B.c.iZ(a,b,r+1)}return null},
 ap9(){var s=0,r=A.G(t.H)
 var $async$ap9=A.H(function(a,b){if(a===1)return A.D(b,r)
 while(true)switch(s){case 0:s=2
-return A.x(A.adV("YOUR_SUPABASE_ANON_KEY","YOUR_SUPABASE_URL"),$async$ap9)
+return A.x(A.adV("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2cHFhbHFtc3VlYXhudnlsYXIiLCJybxlI6ImFub24iLCJpYXQiOjE3MzE1ODk0MDQsImV4cCI6MjAyNjA4MTkwNH0.V7_kUmleHX9Hxitx8dW60CrZ_TeQ1gjIO1xJnn-Y8t4","https://jvpqalqqmsueaxnvylar.supabase.co"),$async$ap9)
 case 2:return A.E(null,r)}})
 return A.F($async$ap9,r)},
 asR(){var s=0,r=A.G(t.y),q

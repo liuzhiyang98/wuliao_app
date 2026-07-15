@@ -29,10 +29,14 @@ jobs:
         run: |
           echo "=== Fixing project structure ==="
           ls -la
-          if [ -d "wuliao_app/lib" ] && [ ! -d "lib" ]; then
-            echo "Creating lib from wuliao_app/lib..."
+          # Always replace lib/ with wuliao_app/lib (force update)
+          if [ -d "wuliao_app/lib" ]; then
+            echo "Removing old lib/ and copying from wuliao_app/lib..."
+            rm -rf ./lib 2>/dev/null || true
             cp -r wuliao_app/lib ./lib
-            echo "lib directory created"
+            echo "lib directory updated from wuliao_app/lib"
+            echo "Contents:"
+            find lib -name "*.dart" | head -20
           fi
           if [ ! -d "web" ]; then
             mkdir -p web
